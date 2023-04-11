@@ -1,0 +1,14 @@
+.authBox {
+    width: 400px;
+    height: 370px;
+    background-color: #ffffff;
+    box-shadow: 4px 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #252525;
+}
+
+p {
+    color: #252525;
+}
