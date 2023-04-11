@@ -6,9 +6,16 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'fire
 import { auth, provider } from '../firebase'
 import { signInWithPopup } from 'firebase/auth';
 import { FcGoogle } from 'react-icons/fc';
+import { GrFormClose } from 'react-icons/gr';
+
+import Alert from '@mui/material/Alert';
+import IconButton from '@mui/material/IconButton';
+import Collapse from '@mui/material/Collapse';
 
 const AuthComponent=() => {
-
+    const [open, setOpen]=useState(false);
+    const formRef=React.useRef();
+    const [error, seterror]=useState('')
     const [email, setEmail]=useState('');
     const [password, setPassword]=useState('');
     const [isLogin, setIsLogin]=useState(true);
@@ -22,31 +29,45 @@ const AuthComponent=() => {
 
 
     const handleLogin=(e) => {
+
+        if (!email||!password) {
+            seterror("Email and password are required.");
+            setOpen(true);
+            return;
+        }
+
         setLoad(true);
         e.preventDefault();
 
         signInWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
+            .then(() => {
                 setLoad(false);
-                console.log(userCredential)
             })
             .catch((err) => {
                 setLoad(false);
+                seterror('See Console for error')
+                setOpen(true);
                 console.log(err);
             })
     };
 
     const handleCreateAccount=(e) => {
+        if (!email||!password) {
+            seterror("Email and password are required.");
+            setOpen(true);
+            return;
+        }
         setLoad(true);
         e.preventDefault();
 
         createUserWithEmailAndPassword(auth, email, password)
-            .then((credentials) => {
+            .then(() => {
                 setLoad(false);
-                console.log(credentials)
             })
             .catch((err) => {
                 setLoad(false);
+                seterror('See Console for error')
+                setOpen(true);
                 console.log(err);
             })
 
@@ -74,7 +95,7 @@ const AuthComponent=() => {
             </Button>
             <div className='authBox'>
                 <h1>{isLogin? 'Log In':'Create Account'}</h1>
-                <form style={{ display: 'grid', gap: '1rem' }}>
+                <form style={{ display: 'grid', gap: '1rem' }} ref={formRef}>
                     <TextField
                         label="Email"
                         type='email'
@@ -122,6 +143,26 @@ const AuthComponent=() => {
                 </p>
 
             </div>
+            <Collapse in={open} sx={{ marginTop: '1rem' }}>
+                <Alert
+                    severity="error"
+                    action={
+                        <IconButton
+                            aria-label="close"
+                            color="inherit"
+                            size="small"
+                            onClick={() => {
+                                setOpen(false);
+                            }}
+                        >
+                            <GrFormClose />
+                        </IconButton>
+                    }
+                    sx={{ mb: 2 }}
+                >
+                    {error}
+                </Alert>
+            </Collapse>
         </div>
     );
 };
